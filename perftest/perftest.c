@@ -162,7 +162,7 @@ static int init(void)
     GLsizei len;
     char log[4096];
 
-#ifdef glewInit
+#ifdef WIN32
     glewInit();
 #endif
     init_instances();
