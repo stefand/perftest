@@ -152,7 +152,7 @@ static HWND create_window(void)
     RegisterClass(&wc);
 
     ret = CreateWindow(L"cube_perftest_wc", L"ddadda",
-                        WS_CAPTION , 0, 0, 640, 480, 0, 0, 0, 0);
+                        WS_CAPTION , 100, 100, 640, 480, 0, 0, 0, 0);
     ShowWindow(ret, SW_SHOW);
 
     return ret;
@@ -192,11 +192,11 @@ static IDirect3DDevice9 *create_device()
     presparm.BackBufferHeight = 480;
     presparm.AutoDepthStencilFormat = D3DFMT_D24X8;
     presparm.EnableAutoDepthStencil = TRUE;
-    presparm.SwapEffect = D3DSWAPEFFECT_COPY;
+    presparm.SwapEffect = D3DSWAPEFFECT_DISCARD;
     presparm.Windowed = TRUE;
     presparm.hDeviceWindow = window;
     presparm.PresentationInterval = 0;
-    hr = d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, NULL, D3DCREATE_HARDWARE_VERTEXPROCESSING,
+    hr = d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, window, D3DCREATE_HARDWARE_VERTEXPROCESSING,
         &presparm, &dev);
     d3d9->Release();
     if(FAILED(hr)) goto err;
@@ -319,7 +319,11 @@ void draw_loop()
         }
         device->EndScene();
         hr = swapchain->Present(NULL, NULL, NULL, NULL, 0);
-        if(FAILED(hr)) printf("present failed\n");
+        if(FAILED(hr))
+        {
+            printf("present failed\n");
+            break;
+        }
         print_fps();
     }
     swapchain->Release();
