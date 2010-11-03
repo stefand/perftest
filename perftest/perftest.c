@@ -1,10 +1,25 @@
 #include <stdio.h>
-#include <windows.h>
 
-#include <gl/glew.h>
-#include <gl/glut.h>
+#if defined(WIN32)
+    #include <windows.h>
+    #include <gl/glew.h>
+    #include <gl/glut.h>
+    static DWORD prev_time;
+#else
+    #include <sys/time.h>
+    static struct timeval prev_time;
+    #ifdef __APPLE__
+        #define  GLUT_RGB                           0x0000
+        #define  GLUT_DOUBLE                        0x0002
+        #define  GLUT_ACCUM                         0x0004
+        #define  GLUT_DEPTH                         0x0010
+        #include <OpenGL/gl.h>
+    #else
+        #include <GL/gl.h>
+        #include <GL/glut.h>
+    #endif
+#endif
 
-static DWORD prev_time;
 static GLuint vbo;
 static GLuint prog;
 
@@ -147,7 +162,9 @@ static int init(void)
     GLsizei len;
     char log[4096];
 
+#ifdef glewInit
     glewInit();
+#endif
     init_instances();
 
     glGenBuffersARB(1, &vbo);
@@ -207,10 +224,10 @@ static int init(void)
         printf("Setup failed\n");
         return 1;
     }
-    prev_time = GetTickCount();
     return 0;
 }
 
+#ifdef WIN32
 static void print_fps()
 {
     static unsigned long frames;
@@ -225,6 +242,26 @@ static void print_fps()
         frames = 0;
     }
 }
+#else
+static void print_fps()
+{
+    static unsigned long frames;
+    struct timeval now;
+    unsigned long diff;
+    
+    gettimeofday(&now, NULL);
+    diff = (now.tv_sec - prev_time.tv_sec) * 1000000 + now.tv_usec - prev_time.tv_usec;
+
+    frames++;
+    /* every 1.5 seconds */
+    if (diff > 1500000)
+    {
+        printf("approx %.2ffps\n", 1000000.0 * frames / diff);
+        prev_time = now;
+        frames = 0;
+    }
+}
+#endif
 
 void display(void)
 {
@@ -261,7 +298,6 @@ int main(int argc, char** argv)
     if(init() != 0)
     {
        printf("Init error\n");
-       Sleep(100000);
        return 1;
     }
     glutDisplayFunc(display);
