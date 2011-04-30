@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cubetest_d3d.cpp">
+    <ClCompile Include="streamsrc_d3d.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

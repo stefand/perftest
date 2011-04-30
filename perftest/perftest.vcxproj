@@ -14,7 +14,7 @@
     <ProjectGuid>{F368F4B2-50FC-4F28-9970-819EDFFD167A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>perftest</RootNamespace>
-    <ProjectName>cubetest_gl</ProjectName>
+    <ProjectName>streamsrc_gl</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -79,7 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="perftest.c" />
+    <ClCompile Include="streamsrc_gl.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

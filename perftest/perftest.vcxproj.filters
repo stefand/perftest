@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="perftest.c">
+    <ClCompile Include="streamsrc_gl.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
