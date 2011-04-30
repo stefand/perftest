@@ -195,7 +195,7 @@ static IDirect3DDevice9 *create_device()
     presparm.SwapEffect = D3DSWAPEFFECT_DISCARD;
     presparm.Windowed = TRUE;
     presparm.hDeviceWindow = window;
-    presparm.PresentationInterval = 0;
+    presparm.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     hr = d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, window, D3DCREATE_HARDWARE_VERTEXPROCESSING,
         &presparm, &dev);
     d3d9->Release();
