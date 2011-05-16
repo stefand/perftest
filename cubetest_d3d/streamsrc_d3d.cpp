@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <d3dx9.h>
 
+unsigned long time_limit = 0;
+
 static const struct
 {
     float x, y, z;
@@ -144,14 +146,13 @@ static void init_instances(instance *instances)
 
 static HWND create_window(void)
 {
-    WNDCLASS wc = {0};
+    WNDCLASSW wc = {0};
     HWND ret;
-    printf("0\n");
-    wc.lpfnWndProc = DefWindowProc;
+    wc.lpfnWndProc = DefWindowProcW;
     wc.lpszClassName = L"cube_perftest_wc";
-    RegisterClass(&wc);
+    RegisterClassW(&wc);
 
-    ret = CreateWindow(L"cube_perftest_wc", L"ddadda",
+    ret = CreateWindowW(L"cube_perftest_wc", L"ddadda",
                         WS_CAPTION , 100, 100, 640, 480, 0, 0, 0, 0);
     ShowWindow(ret, SW_SHOW);
 
@@ -290,12 +291,14 @@ void draw_loop()
     MSG msg;
     HRESULT hr;
     IDirect3DSwapChain9 *swapchain;
+    DWORD start;
+    unsigned long frames = ~0UL;
 
     device->GetSwapChain(0, &swapchain);
  
     device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE );
     device->SetRenderState(D3DRS_ZENABLE, TRUE);
-    while(true)
+    while(!time_limit || (start + time_limit > GetTickCount()))
     {
         hr = device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x1a1a1a1a, 1.0, 0);
         if(FAILED(hr)) printf("Clear failed\n");
@@ -324,16 +327,36 @@ void draw_loop()
             printf("present failed\n");
             break;
         }
-        print_fps();
+
+        if(!time_limit) print_fps();
+        else
+        {
+            /* Don't time the first frame. AMD cards on Windows need a while to switch display modes
+             * or slow first-time draws.
+             */
+            if(frames == 0) start = GetTickCount();
+            frames++;
+        }
     }
+    printf("frames per second: %f\n", 1000.0 * ((float) frames) / ((float) time_limit));
     swapchain->Release();
+    instance_data->Release();
 }
 
 int main(int argc, char*argv[])
 {
+    long ref;
+    if(argc > 1) time_limit = atol(argv[1]);
+    if(time_limit)
+    {
+        printf("Running for %lu seconds\n", time_limit);
+        time_limit *= 1000;
+    }
 	device = create_device();
     if(!device) return 1;
 
     draw_loop();
+    ref = device->Release();
+    printf("refcount %ld\n", ref);
 }
 
