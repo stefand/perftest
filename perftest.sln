@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "drawprim_gl", "drawprim_gl\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clear_d3d", "clear_d3d\clear_d3d.vcxproj", "{C124EDF7-11CB-4C4F-9090-E1A129CED16D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clear_gl", "clear_gl\clear_gl.vcxproj", "{5F15B4A2-993B-4A5B-BE69-7F5D438C3136}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +39,10 @@ Global
 		{C124EDF7-11CB-4C4F-9090-E1A129CED16D}.Debug|Win32.Build.0 = Release|Win32
 		{C124EDF7-11CB-4C4F-9090-E1A129CED16D}.Release|Win32.ActiveCfg = Release|Win32
 		{C124EDF7-11CB-4C4F-9090-E1A129CED16D}.Release|Win32.Build.0 = Release|Win32
+		{5F15B4A2-993B-4A5B-BE69-7F5D438C3136}.Debug|Win32.ActiveCfg = Release|Win32
+		{5F15B4A2-993B-4A5B-BE69-7F5D438C3136}.Debug|Win32.Build.0 = Release|Win32
+		{5F15B4A2-993B-4A5B-BE69-7F5D438C3136}.Release|Win32.ActiveCfg = Release|Win32
+		{5F15B4A2-993B-4A5B-BE69-7F5D438C3136}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
