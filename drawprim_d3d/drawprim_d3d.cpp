@@ -292,9 +292,6 @@ void draw_loop()
     DWORD start;
     unsigned long frames = ~0UL;
 
-    /* For stupid drivers that don't block while modeswitching */
-    if(time_limit) Sleep(5000);
-
     device->GetSwapChain(0, &swapchain);
  
     device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE );
@@ -327,6 +324,7 @@ void draw_loop()
             printf("present failed\n");
             break;
         }
+
         if(!time_limit) print_fps();
         else
         {
