@@ -77,7 +77,6 @@ void display(void)
         float g = ((float) y) / (height - 1);
         for(x = 0; x < width; x+=step)
         {
-             DWORD color = 0;
              float r = ((float) x) / (width - 1);
 
              glClearColor(r, g, 0.0, 0.0);
