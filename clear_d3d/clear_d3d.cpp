@@ -106,7 +106,7 @@ void draw_loop()
 
             for(x = 0; x < pp.BackBufferWidth; x+=step)
             {
-                float r = ((float) x) / (pp.BackBufferWidth - 1);;
+                float r = ((float) x) / (pp.BackBufferWidth - 1);
                 D3DRECT rect;
                 DWORD color = 0;
 
