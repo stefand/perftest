@@ -90,7 +90,7 @@ void draw_loop()
 
     device->GetSwapChain(0, &swapchain);
     swapchain->GetPresentParameters(&pp);
- 
+    start = GetTickCount();
     while(!time_limit || (start + time_limit > GetTickCount()))
     {
         unsigned int x, y;
@@ -137,8 +137,8 @@ void draw_loop()
             /* Don't time the first frame. AMD cards on Windows need a while to switch display modes
              * or slow first-time draws.
              */
-            if(frames == 0) start = GetTickCount();
             frames++;
+            if(frames == 0) start = GetTickCount();
         }
     }
     printf("frames per second: %f\n", 1000.0 * ((float) frames) / ((float) time_limit));

@@ -298,6 +298,7 @@ void draw_loop()
  
     device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE );
     device->SetRenderState(D3DRS_ZENABLE, TRUE);
+    start = GetTickCount();
     while(!time_limit || (start + time_limit > GetTickCount()))
     {
         hr = device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x1a1a1a1a, 1.0, 0);
@@ -334,8 +335,8 @@ void draw_loop()
             /* Don't time the first frame. AMD cards on Windows need a while to switch display modes
              * or slow first-time draws.
              */
-            if(frames == 0) start = GetTickCount();
             frames++;
+            if(frames == 0) start = GetTickCount();
         }
     }
     printf("frames per second: %f\n", 1000.0 * ((float) frames) / ((float) time_limit));
