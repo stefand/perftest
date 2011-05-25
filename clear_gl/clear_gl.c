@@ -18,6 +18,7 @@
         #include <GL/gl.h>
         #include <GL/glut.h>
     #endif
+    #define min(a,b) ((a)<(b)?(a):(b))
 #endif
 
 static int init(void)
