@@ -5,6 +5,9 @@
 
 unsigned long time_limit = 0;
 
+/* A triangle list makes it easy to draw the entire cube in one draw, eliminating the drawprim
+ * overhead as much as possible. The drawprim overhead is subject of a different test
+ */
 static const struct
 {
     float x, y, z;
@@ -15,10 +18,14 @@ cube[] =
     {   -0.5,   -0.5,   -0.5 },
     {    0.5,   -0.5,   -0.5 },
     {   -0.5,    0.5,   -0.5 },
+    {    0.5,   -0.5,   -0.5 },
+    {   -0.5,    0.5,   -0.5 },
     {    0.5,    0.5,   -0.5 },
 
     /* Back side */
     {   -0.5,   -0.5,    0.5 },
+    {    0.5,   -0.5,    0.5 },
+    {   -0.5,    0.5,    0.5 },
     {    0.5,   -0.5,    0.5 },
     {   -0.5,    0.5,    0.5 },
     {    0.5,    0.5,    0.5 },
@@ -27,10 +34,14 @@ cube[] =
     {   -0.5,   -0.5,    -0.5 },
     {   -0.5,    0.5,    -0.5 },
     {   -0.5,   -0.5,     0.5 },
+    {   -0.5,    0.5,    -0.5 },
+    {   -0.5,   -0.5,     0.5 },
     {   -0.5,    0.5,     0.5 },
 
     /* right side */
     {    0.5,   -0.5,    -0.5 },
+    {    0.5,    0.5,    -0.5 },
+    {    0.5,   -0.5,     0.5 },
     {    0.5,    0.5,    -0.5 },
     {    0.5,   -0.5,     0.5 },
     {    0.5,    0.5,     0.5 },
@@ -39,10 +50,14 @@ cube[] =
     {   -0.5,   -0.5,    -0.5 },
     {    0.5,   -0.5,    -0.5 },
     {   -0.5,   -0.5,     0.5 },
+    {    0.5,   -0.5,    -0.5 },
+    {   -0.5,   -0.5,     0.5 },
     {    0.5,   -0.5,     0.5 },
 
     /* Top */
     {   -0.5,    0.5,    -0.5 },
+    {    0.5,    0.5,    -0.5 },
+    {   -0.5,    0.5,     0.5 },
     {    0.5,    0.5,    -0.5 },
     {   -0.5,    0.5,     0.5 },
     {    0.5,    0.5,     0.5 },
@@ -339,12 +354,7 @@ void draw_loop()
         for(i = 0; i < draw_instances; i++)
         {
             device->SetVertexShader(shaders[i]);
-            device->DrawPrimitive(D3DPT_TRIANGLESTRIP,  0, 2);
-            device->DrawPrimitive(D3DPT_TRIANGLESTRIP,  4, 2);
-            device->DrawPrimitive(D3DPT_TRIANGLESTRIP,  8, 1);
-            device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 12, 2);
-            device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 16, 2);
-            device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 20, 2);
+            device->DrawPrimitive(D3DPT_TRIANGLELIST,  0, 12);
         }
         device->EndScene();
         hr = swapchain->Present(NULL, NULL, NULL, NULL, 0);

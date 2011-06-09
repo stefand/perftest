@@ -24,6 +24,9 @@ static unsigned long frames;
 
 static GLuint vbo;
 
+/* A triangle list makes it easy to draw the entire cube in one draw, eliminating the drawprim
+ * overhead as much as possible. The drawprim overhead is subject of a different test
+ */
 static const struct
 {
     float x, y, z;
@@ -34,10 +37,14 @@ cube[] =
     {   -0.5,   -0.5,   -0.5 },
     {    0.5,   -0.5,   -0.5 },
     {   -0.5,    0.5,   -0.5 },
+    {    0.5,   -0.5,   -0.5 },
+    {   -0.5,    0.5,   -0.5 },
     {    0.5,    0.5,   -0.5 },
 
     /* Back side */
     {   -0.5,   -0.5,    0.5 },
+    {    0.5,   -0.5,    0.5 },
+    {   -0.5,    0.5,    0.5 },
     {    0.5,   -0.5,    0.5 },
     {   -0.5,    0.5,    0.5 },
     {    0.5,    0.5,    0.5 },
@@ -46,10 +53,14 @@ cube[] =
     {   -0.5,   -0.5,    -0.5 },
     {   -0.5,    0.5,    -0.5 },
     {   -0.5,   -0.5,     0.5 },
+    {   -0.5,    0.5,    -0.5 },
+    {   -0.5,   -0.5,     0.5 },
     {   -0.5,    0.5,     0.5 },
 
     /* right side */
     {    0.5,   -0.5,    -0.5 },
+    {    0.5,    0.5,    -0.5 },
+    {    0.5,   -0.5,     0.5 },
     {    0.5,    0.5,    -0.5 },
     {    0.5,   -0.5,     0.5 },
     {    0.5,    0.5,     0.5 },
@@ -58,10 +69,14 @@ cube[] =
     {   -0.5,   -0.5,    -0.5 },
     {    0.5,   -0.5,    -0.5 },
     {   -0.5,   -0.5,     0.5 },
+    {    0.5,   -0.5,    -0.5 },
+    {   -0.5,   -0.5,     0.5 },
     {    0.5,   -0.5,     0.5 },
 
     /* Top */
     {   -0.5,    0.5,    -0.5 },
+    {    0.5,    0.5,    -0.5 },
+    {   -0.5,    0.5,     0.5 },
     {    0.5,    0.5,    -0.5 },
     {   -0.5,    0.5,     0.5 },
     {    0.5,    0.5,     0.5 },
@@ -135,12 +150,7 @@ void display(void)
     {
         glUseProgram(prog[i]);
 
-        glDrawArrays(GL_TRIANGLE_STRIP,  0, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP,  4, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP,  8, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 12, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 16, 4);
-        glDrawArrays(GL_TRIANGLE_STRIP, 20, 4);
+        glDrawArrays(GL_TRIANGLES,  0, 36);
     }
 
     glutSwapBuffers();
