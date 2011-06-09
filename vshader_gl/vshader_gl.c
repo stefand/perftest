@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #if defined(WIN32)
     #include <windows.h>
@@ -156,7 +157,7 @@ static void init_shaders(GLuint frag)
     unsigned int x = 0, y = 0, z = 0;
     unsigned int color = 0;
     float xf, yf, zf, rf, gf, bf;
-    char *code = (char *) HeapAlloc(GetProcessHeap(), 0, strlen(vshader) + 128);
+    char *code = (char *) malloc(strlen(vshader) + 128);
     GLuint vert;
     GLsizei len;
     char log[4096];
@@ -256,7 +257,7 @@ static void init_shaders(GLuint frag)
             printf("%s\n", log);
         }
     }
-    HeapFree(GetProcessHeap(), 0, code);
+    free(code);
 
     display();
     frames = 0;
