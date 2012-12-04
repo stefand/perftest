@@ -178,6 +178,8 @@ static IDirect3DDevice9 *create_device()
     IDirect3DPixelShader9 *ps = NULL;
     D3DXMATRIX mat, scale, translate;
     D3DXVECTOR3 axis;
+    IDirect3DTexture9 *dummy_texture;
+    unsigned int i;
 
     void *data;
     static const D3DVERTEXELEMENT9 decl_elements[] = {
@@ -247,6 +249,16 @@ static IDirect3DDevice9 *create_device()
     ps->Release();
     decl->Release();
     cubebuffer->Release();
+
+    /* Assign dummy textures to catch the performance impact of preloading unused textures */
+    for (i = 0; i < 8; i++)
+    {
+        hr = dev->CreateTexture(16, 16, 1, 0, D3DFMT_X8R8G8B8, D3DPOOL_MANAGED, &dummy_texture, NULL);
+        if (FAILED(hr)) goto err;
+        hr = dev->SetTexture(i, dummy_texture);
+        dummy_texture->Release();
+        if (FAILED(hr)) goto err;
+    }
 
     return dev;
 

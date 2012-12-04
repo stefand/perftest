@@ -87,6 +87,15 @@ void draw_loop()
     unsigned long frames = ~0UL;
     D3DPRESENT_PARAMETERS pp;
     const unsigned int step = 6;
+    const float point[] = {0.0, 0.0, 0.0};
+
+    /* Perform a dummy draw to make wined3d flush the states. I don't know which is more realistic,
+     * a clear with a prior draw(e.g. after finishing a frame) or a framebuffer change(e.g. render
+     * to texture), but if we want to test the SetRenderTarget<->Clear interaction this can be done
+     * with a separate test. This one should just test plain clears
+     */
+    device->SetFVF(D3DFVF_XYZ);
+    device->DrawPrimitiveUP(D3DPT_POINTLIST, 1, point, sizeof(point));
 
     device->GetSwapChain(0, &swapchain);
     swapchain->GetPresentParameters(&pp);
