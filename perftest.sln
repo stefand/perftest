@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynbuffer_d3d", "dynbuffer_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynbuffer_gl", "dynbuffer_gl\dynbuffer_gl.vcxproj", "{FE9AEE74-ADA3-4008-812A-C9C9AFE56350}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mov_d3d", "mov_d3d\mov_d3d.vcxproj", "{387F568A-CBBB-4D0E-B925-0673F2588EA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -67,6 +69,10 @@ Global
 		{FE9AEE74-ADA3-4008-812A-C9C9AFE56350}.Debug|Win32.Build.0 = Release|Win32
 		{FE9AEE74-ADA3-4008-812A-C9C9AFE56350}.Release|Win32.ActiveCfg = Release|Win32
 		{FE9AEE74-ADA3-4008-812A-C9C9AFE56350}.Release|Win32.Build.0 = Release|Win32
+		{387F568A-CBBB-4D0E-B925-0673F2588EA1}.Debug|Win32.ActiveCfg = Release|Win32
+		{387F568A-CBBB-4D0E-B925-0673F2588EA1}.Debug|Win32.Build.0 = Release|Win32
+		{387F568A-CBBB-4D0E-B925-0673F2588EA1}.Release|Win32.ActiveCfg = Release|Win32
+		{387F568A-CBBB-4D0E-B925-0673F2588EA1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
