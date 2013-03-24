@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "const_d3d", "const_d3d\cons
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "const_gl", "const_gl\const_gl.vcxproj", "{17C0F222-D0CC-457D-B624-075DFAE27DD3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "garage_shader", "garage_shader\garage_shader.vcxproj", "{4AE3EF7C-EC02-48B0-90E0-C214300B65C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -91,6 +93,10 @@ Global
 		{17C0F222-D0CC-457D-B624-075DFAE27DD3}.Debug|Win32.Build.0 = Release|Win32
 		{17C0F222-D0CC-457D-B624-075DFAE27DD3}.Release|Win32.ActiveCfg = Release|Win32
 		{17C0F222-D0CC-457D-B624-075DFAE27DD3}.Release|Win32.Build.0 = Release|Win32
+		{4AE3EF7C-EC02-48B0-90E0-C214300B65C9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4AE3EF7C-EC02-48B0-90E0-C214300B65C9}.Debug|Win32.Build.0 = Debug|Win32
+		{4AE3EF7C-EC02-48B0-90E0-C214300B65C9}.Release|Win32.ActiveCfg = Release|Win32
+		{4AE3EF7C-EC02-48B0-90E0-C214300B65C9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
