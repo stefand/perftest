@@ -6,9 +6,6 @@
 unsigned long time_limit = 0;
 static DWORD prev_time;
 
-/* A triangle list makes it easy to draw the entire cube in one draw, eliminating the drawprim
- * overhead as much as possible. The drawprim overhead is subject of a different test
- */
 static const struct
 {
     float x, y, z;
@@ -50,6 +47,7 @@ static const char *vs_txt =
 
 const char *ps_txt_const =
     "ps_2_0\n"
+#if 0
     "def c0, 0.92341375, 0.34255252342, 1.51991844e-004, 1\n"
     "def c1, 0.347353422, 0.4633423421, 1.51991844e-003, 1\n"
     "def c2, 0.99609375, 0.00389099121, 1.51991844e-002, 1\n"
@@ -71,6 +69,7 @@ const char *ps_txt_const =
     "def c18, 6.28318548, -3.14159274, 1, -1\n"
     "def c19, -1, -2, -3, -4\n"
     "def c20, 0, 1, 0.125, 0\n"
+#endif
     "dcl t0\n"
 
 	"dp4 r0.x, t0, c0\n"
@@ -88,15 +87,14 @@ const char *ps_txt_const =
 	"dp4 r0.z, r0, c10\n"
 	"dp4 r0.w, r0, c11\n"
 
-
-	"dp4 r0.w, r0, c12\n"
-	"dp4 r0.w, r0, c13\n"
-	"dp4 r0.w, r0, c14\n"
+	"dp4 r0.x, r0, c12\n"
+	"dp4 r0.y, r0, c13\n"
+	"dp4 r0.z, r0, c14\n"
 	"dp4 r0.w, r0, c15\n"
 
-	"dp4 r0.w, r0, c16\n"
-	"dp4 r0.w, r0, c17\n"
-	"dp4 r0.w, r0, c18\n"
+	"dp4 r0.x, r0, c16\n"
+	"dp4 r0.y, r0, c17\n"
+	"dp4 r0.z, r0, c18\n"
 	"dp4 r0.w, r0, c19\n"
 
 	"add r0, r0, c20\n"
@@ -133,7 +131,7 @@ static IDirect3DDevice9 *create_device()
     presparm.BackBufferCount = 1;
     presparm.BackBufferFormat = D3DFMT_X8R8G8B8;
     presparm.BackBufferWidth = 1920; /* FIXME */
-    presparm.BackBufferHeight = 1200;
+    presparm.BackBufferHeight = 1080;
     presparm.AutoDepthStencilFormat = D3DFMT_D24X8;
     presparm.EnableAutoDepthStencil = FALSE;
     presparm.SwapEffect = D3DSWAPEFFECT_DISCARD;
