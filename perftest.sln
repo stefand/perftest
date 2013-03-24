@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tex_d3d", "tex_d3d\tex_d3d.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "const_d3d", "const_d3d\const_d3d.vcxproj", "{93735821-86DB-49EF-A837-C72C6AF3CC6D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "const_gl", "const_gl\const_gl.vcxproj", "{17C0F222-D0CC-457D-B624-075DFAE27DD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -85,6 +87,10 @@ Global
 		{93735821-86DB-49EF-A837-C72C6AF3CC6D}.Debug|Win32.Build.0 = Release|Win32
 		{93735821-86DB-49EF-A837-C72C6AF3CC6D}.Release|Win32.ActiveCfg = Release|Win32
 		{93735821-86DB-49EF-A837-C72C6AF3CC6D}.Release|Win32.Build.0 = Release|Win32
+		{17C0F222-D0CC-457D-B624-075DFAE27DD3}.Debug|Win32.ActiveCfg = Release|Win32
+		{17C0F222-D0CC-457D-B624-075DFAE27DD3}.Debug|Win32.Build.0 = Release|Win32
+		{17C0F222-D0CC-457D-B624-075DFAE27DD3}.Release|Win32.ActiveCfg = Release|Win32
+		{17C0F222-D0CC-457D-B624-075DFAE27DD3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
