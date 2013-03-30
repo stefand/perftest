@@ -295,6 +295,30 @@ static const float vtxdata1[] =
      0.999f,   -0.999f,     0.000f,     1.000f,     1.000f,
 };
 
+const char *ps2 =
+    "ps_3_0\n"
+    "def c3, 0.25, 0, 0, 0\n"
+    "dcl_texcoord v0.xy\n"
+    "dcl_2d s0\n"
+    "add r0.xy, c0, v0\n"
+    "texld r0, r0, s0\n"
+    "texld r1, v0, s0\n"
+    "add r0.x, r0.x, r1.x\n"
+    "add r0.yz, c1.xxyw, v0.xxyw\n"
+    "texld r1, r0.yzzw, s0\n"
+    "add r0.x, r0.x, r1.x\n"
+    "add r0.yz, c2.xxyw, v0.xxyw\n"
+    "texld r1, r0.yzzw, s0\n"
+    "add r0.x, r0.x, r1.x\n"
+    "mul oC0, r0.x, c3.x\n";
+
+static const float ps_const2[] =
+{
+    0.000f, -0.001f, 0.000f, 0.000f,
+    0.000f,  0.001f, 0.000f, 0.000f,
+    0.000f,  0.003f, 0.000f, 0.000f 
+};
+
 struct drawdata data[] =
 {
     {
@@ -304,6 +328,15 @@ struct drawdata data[] =
         NULL /*dst surface, initialized later */,
         NULL, 0, /* vs const */
         ps_const1, 8,
+        0, 2
+    },
+    {
+        decl1, NULL, vs1, NULL, ps2, NULL,
+        {{NULL /* buffer1 */, 0, 20}},
+        {{NULL, NULL, D3DTADDRESS_WRAP}},
+        NULL /*dst surface, initialized later */,
+        NULL, 0, /* vs const */
+        ps_const2, 3,
         0, 2
     }
 };
@@ -329,8 +362,19 @@ HRESULT init_data(IDirect3DDevice9 *dev)
     if (FAILED(hr))
         goto err;
     tex->GetSurfaceLevel(0, &surface);
-    //data[1].tex[0] = tex;
+    data[1].textures[0].texture = tex;
     data[0].target = surface;
+    tex = NULL;
+    surface = NULL;
+
+    data[1].streams[0].buf = data[0].streams[0].buf;
+    data[1].streams[0].buf->AddRef();
+    hr = dev->CreateTexture(1024, 768, 1, D3DUSAGE_RENDERTARGET, D3DFMT_R32F, D3DPOOL_DEFAULT, &tex, NULL);
+    if (FAILED(hr))
+        goto err;
+    tex->GetSurfaceLevel(0, &surface);
+    //data[2].textures[0].texture = tex;
+    data[1].target = surface;
     tex = NULL;
     surface = NULL;
 
