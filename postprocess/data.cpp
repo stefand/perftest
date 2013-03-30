@@ -43,12 +43,14 @@ static const char *ps1 =
     "dcl_2d s0\n"
     "dcl_2d s1\n"
     "dcl_2d s2\n"
-    "texld_pp r0, v0, s1\n"
+    // native / wined3d = ratio
+    // 1,0105782792665726375176304654443
+    "texld_pp r0, v0, s1\n" // 1300 / 1198 = 1,0851419031719532554257095158598
     "mad_pp r0.zw, r0.xyxy, c17.x, c17.y\n"
     "mad_pp r0.z, r0.z, c17.z, c17.w\n"
     "frc_pp r0.z, r0.z\n"
-    "mad_pp r0.z, r0.z, c18.x, c18.y\n"
-    "sincos_pp r1.xy, r0.z\n"
+    "mad_pp r0.z, r0.z, c18.x, c18.y\n" // 1243 / 1198 = 1,0375626043405676126878130217028
+    "sincos_pp r1.xy, r0.z\n" // 987 / 953 = 1,0356768100734522560335781741868
     "mad_pp r0.z, r0.w, -r0.w, c8.w\n"
     "rsq_pp r0.z, r0.z\n"
     "rcp_pp r0.z, r0.z\n"
@@ -59,8 +61,9 @@ static const char *ps1 =
     "mul r0.xyz, r1, c18.zwzw\n"
     "nrm r1.xyz, r0\n"
     "mul r0.xy, c3, v0\n"
-    "mul r0.zw, r0.xyxy, c9.x\n"
-    "frc r0.zw, r0_abs\n"
+    "mul r0.zw, r0.xyxy, c9.x\n" // 501 / 493 = 1,0162271805273833671399594320487
+    "frc r0.zw, r0_abs\n" // 458 / 450 = 1,0177777777777777777777777777778
+
     "cmp r0.xy, r0, r0.zwzw, -r0.zwzw\n"
     "texld r0, r0, s2\n"
     "mad r0.xyz, r0, c17.x, c17.y\n"
