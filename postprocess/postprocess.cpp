@@ -76,12 +76,12 @@ static IDirect3DDevice9 *create_device()
     memset(&presparm, 0, sizeof(presparm));
     presparm.BackBufferCount = 1;
     presparm.BackBufferFormat = D3DFMT_X8R8G8B8;
-    presparm.BackBufferWidth = 1920;
-    presparm.BackBufferHeight = 1200;
+    presparm.BackBufferWidth = 1024;
+    presparm.BackBufferHeight = 768;
     presparm.AutoDepthStencilFormat = D3DFMT_D24S8;
     presparm.EnableAutoDepthStencil = FALSE;
     presparm.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    presparm.Windowed = FALSE;
+    presparm.Windowed = TRUE;
     presparm.hDeviceWindow = window;
     presparm.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     hr = d3d9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, window, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE,
@@ -190,7 +190,7 @@ static void draw_loop()
         device->BeginScene();
         for (i = 0; i < numdraws; i++)
         {
-            //hr = device->SetRenderTarget(0, data[i].target);
+            hr = device->SetRenderTarget(0, data[i].target);
             if (FAILED(hr))
                 printf("SetRenderTarget failed\n");
             hr = device->SetVertexDeclaration(data[i].decl);
@@ -224,7 +224,6 @@ static void draw_loop()
                 printf("Draw %u failed: %08x\n", i, hr);
         }
 
-#if 0
         device->SetRenderTarget(0, backbuffer);
         device->SetTexture(0, last_tex);
         device->SetVertexDeclaration(blit_decl);
@@ -233,7 +232,6 @@ static void draw_loop()
         hr = device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, blit_vtx, sizeof(float) * 5);
         if (FAILED(hr))
             printf("Stretchrect failed: %08x\n", hr);
-#endif
 
         device->EndScene();
 
