@@ -9,14 +9,18 @@ static DWORD prev_time;
 static const struct
 {
     float x, y, z;
+    DWORD normal;
+    SHORT t0u, t0v;
+    DWORD tangent, binormal, color;
+    SHORT t1u, t1v;
 }
 quad[] =
 {
     /* Front side */
-    {   -1.0,   -1.0,   0.0 },
-    {   -1.0,    1.0,   0.0 },
-    {    1.0,   -1.0,   0.0 },
-    {    1.0,    1.0,   0.0 },
+    {   -1.0,   -1.0,   0.0, 0xff000000,    0,          0,          0xff000000, 0xff000000, 0xffffff00,     0,          0           },
+    {   -1.0,    1.0,   0.0, 0xff000000,    0,          ~((SHORT)0),0xff000000, 0xff000000, 0xffffff00,     0,          ~((SHORT)0) },
+    {    1.0,   -1.0,   0.0, 0xff000000,    ~((SHORT)0),  0,        0xff000000, 0xff000000, 0xffffff00,     ~((SHORT)0),0           },
+    {    1.0,    1.0,   0.0, 0xff000000,    ~((SHORT)0),~((SHORT)0),0xff000000, 0xff000000, 0xffffff00,     ~((SHORT)0),~((SHORT)0) },
 
 };
 
@@ -39,68 +43,104 @@ static HWND create_window(void)
 
 static HWND window;
 
-static const char *vs_txt =
-    "vs_2_0\n"
+const char *ps_txt =
+    "ps_3_0\n"
+    "def c4, 0.212500006, 0.715399981, 0.0720999986, 0.00392156886\n"
+    "def c5, 255.999985, 65535.9961, 16777215, 0.5\n"
+    "def c6, 2, -1, 0, 1.00392163\n"
+    "dcl_texcoord v0.x\n"
+    "dcl_texcoord1 v1.xy\n"
+    "dcl_texcoord2 v2.xy\n"
+    "dcl_texcoord3_pp v3.xyz\n"
+    "dcl_texcoord4_pp v4.xyz\n"
+    "dcl_texcoord5_pp v5.xyz\n"
+    "dcl_2d s0\n"
+    "dcl_2d s1\n"
+    "dcl_2d s2\n"
+    "dcl_2d s3\n"
+    "dcl_2d s4\n"
+    "texld_pp r0, v1, s1\n"
+    "mul_pp r1.xyz, r0, r0\n"
+    "cmp_pp r0.xyz, c0.x, r0, r1\n"
+    "texld_pp r1, v2, s0\n"
+    "mul_pp r2.xyz, r1, r1\n"
+    "cmp_pp r1.xyz, c0.x, r1, r2\n"
+    "mul_pp oC2.xyz, r0, r1\n"
+    "texld_pp r0, v1, s3\n"
+    "dp3_pp oC1.z, r0, c4\n"
+    "mul r0.x, c3.y, v0.x\n"
+    "mul r0.xyz, r0.x, c5\n"
+    "frc r1.xyz, r0\n"
+    "add r0.xyz, r0, -r1\n"
+    "mul r1.xyz, r0.xxyw, c6.zwww\n"
+    "mad oC0.xyz, r0, c4.w, -r1\n"
+    "mov_pp oC0.w, c2.x\n"
+    "texld r0, v1, s2\n"
+    "mad_pp r0.xyz, r0, c6.x, c6.y\n"
+    "mul_pp r1.xyz, r0.y, v5\n"
+    "mad_pp r0.xyw, r0.x, v4.xyzz, r1.xyzz\n"
+    "mad_pp r0.xyz, r0.z, v3, r0.xyww\n"
+    "nrm_pp r1.xyz, r0\n"
+    "mad_pp r0.xyz, r1, c5.w, c5.w\n"
+    "mov r0.w, c6.z\n"
+    "texldl_pp r1, r0.yxww, s4\n"
+    "mov_pp oC1.y, r0.z\n"
+    "mov_pp oC1.x, r1.x\n"
+    "mov oC1.w, c6.z\n"
+    "mov oC2.w, c6.z\n";
+
+const char *vs_txt =
+    "vs_3_0\n"
+    "def c8, -127, 0.00787401572, 0.000488519785, 0\n"
     "dcl_position v0\n"
-    "mov oPos, v0\n"
-    "mov oT0, v0\n";
-
-const char *ps_txt_const =
-    "ps_2_0\n"
-#if 0
-    "def c0, 0.92341375, 0.34255252342, 1.51991844e-004, 1\n"
-    "def c1, 0.347353422, 0.4633423421, 1.51991844e-003, 1\n"
-    "def c2, 0.99609375, 0.00389099121, 1.51991844e-002, 1\n"
-    "def c3, 0.53212311, 0.20389099121, 1.51991844e-001, 1\n"
-    "def c4, 0.23452315, 0.00389099121, 1.452345122, 1\n"
-    "def c5, 0.42345523, 0.01389099121, 2.33513123, 1\n"
-    "def c6, 0.99609375, 0.20389099121, 1.51991844e-005, 1\n"
-    "def c7, 0.99609375, 0.30389099121, 1.51991844e-005, 1\n"
-    "def c8, 0.99609375, 0.40389099121, 1.51991844e-005, 1\n"
-    "def c9, 0.25, -0.556640983, -0.0371089987, -0.654296994\n"
-    "def c10, 0.173828006, 0.111327998, 0.0644529983, 255\n"
-    "def c11, 0.00195299997, 0.0820309967, -0.0605470017, 0\n"
-    "def c12, 0.220703006, -0.359375, -0.0625, -5\n"
-    "def c13, 0.242188007, 0.126953006, -0.25, 0\n"
-    "def c14, 0.0703129992, -0.0253909994, 0.148438007, 0\n"
-    "def c15, -0.078125, 0.0136719998, -0.314453006, 0\n"
-    "def c16, 0.117187999, -0.140625, -0.199219003, 0\n"
-    "def c17, 2, -1, 0.499999583, 0.5\n"
-    "def c18, 6.28318548, -3.14159274, 1, -1\n"
-    "def c19, -1, -2, -3, -4\n"
-    "def c20, 0, 1, 0.125, 0\n"
-#endif
-    "dcl t0\n"
-
-	"dp4 r0.x, t0, c0\n"
-	"dp4 r0.y, t0, c1\n"
-	"dp4 r0.z, t0, c2\n"
-	"dp4 r0.w, t0, c3\n"
-
-	"dp4 r0.x, r0, c4\n"
-	"dp4 r0.y, r0, c5\n"
-	"dp4 r0.z, r0, c6\n"
-	"dp4 r0.w, r0, c7\n"
-
-	"dp4 r0.x, r0, c8\n"
-	"dp4 r0.y, r0, c9\n"
-	"dp4 r0.z, r0, c10\n"
-	"dp4 r0.w, r0, c11\n"
-
-	"dp4 r0.x, r0, c12\n"
-	"dp4 r0.y, r0, c13\n"
-	"dp4 r0.z, r0, c14\n"
-	"dp4 r0.w, r0, c15\n"
-
-	"dp4 r0.x, r0, c16\n"
-	"dp4 r0.y, r0, c17\n"
-	"dp4 r0.z, r0, c18\n"
-	"dp4 r0.w, r0, c19\n"
-
-	"add r0, r0, c20\n"
-
-	"mov oC0, r0\n"
-;
+    "dcl_normal v1\n"
+    "dcl_binormal v2\n"
+    "dcl_tangent v3\n"
+    "dcl_texcoord v4\n"
+    "dcl_texcoord1 v5\n"
+    "dcl_position o0\n"
+    "dcl_texcoord o1.x\n"
+    "dcl_texcoord1 o2.xy\n"
+    "dcl_texcoord2 o3.xy\n"
+    "dcl_texcoord3 o4.xyz\n"
+    "dcl_texcoord4 o5.xyz\n"
+    "dcl_texcoord5 o6.xyz\n"
+    "add r0.xyz, c8.x, v1\n"
+    "mul r0.xyz, r0, c8.y\n"
+    "dp3 r1.x, r0, c4\n"
+    "dp3 r1.y, r0, c5\n"
+    "dp3 r1.z, r0, c6\n"
+    "dp3 r0.x, r1, r1\n"
+    "rsq r0.x, r0.x\n"
+    "mul o4.xyz, r0.x, r1\n"
+    "dp4 r0.x, v0, c4\n"
+    "dp4 r0.y, v0, c5\n"
+    "dp4 r0.z, v0, c6\n"
+    "dp4 r0.w, v0, c7\n"
+    "dp4 o0.x, r0, c0\n"
+    "dp4 o0.y, r0, c1\n"
+    "dp4 o0.z, r0, c2\n"
+    "dp4 r0.x, r0, c3\n"
+    "mul o2.xy, c8.z, v4\n"
+    "mul o3.xy, c8.z, v5\n"
+    "add r0.yzw, c8.x, v3.xxyz\n"
+    "mul r0.yzw, r0, c8.y\n"
+    "dp3 r1.x, r0.yzww, c4\n"
+    "dp3 r1.y, r0.yzww, c5\n"
+    "dp3 r1.z, r0.yzww, c6\n"
+    "dp3 r0.y, r1, r1\n"
+    "rsq r0.y, r0.y\n"
+    "mul o5.xyz, r0.y, r1\n"
+    "add r0.yzw, c8.x, v2.xxyz\n"
+    "mul r0.yzw, r0, c8.y\n"
+    "dp3 r1.x, r0.yzww, c4\n"
+    "dp3 r1.y, r0.yzww, c5\n"
+    "dp3 r1.z, r0.yzww, c6\n"
+    "dp3 r0.y, r1, r1\n"
+    "rsq r0.y, r0.y\n"
+    "mul o6.xyz, r0.y, r1\n"
+    "mov o0.w, r0.x\n"
+    "mov o1.x, r0.x\n";
 
 static IDirect3DDevice9 *create_device()
 {
@@ -113,13 +153,27 @@ static IDirect3DDevice9 *create_device()
 	IDirect3DVertexShader9 *vs = NULL;
 	IDirect3DPixelShader9 *ps = NULL;
 	ID3DXBuffer *vs_code = NULL, *ps_code = NULL, *msgs = NULL;
-	IDirect3DTexture9 *tex[3] = {NULL, NULL, NULL};
+	IDirect3DTexture9 *tex[4] = {NULL, NULL, NULL, NULL};
 	const float half[] = {0.5f, 0.5f, 0.5f, 0.5f};
 	unsigned int i;
+    const float identity[] =
+    {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+    IDirect3DSurface9 *rt1 = NULL, *rt2 = NULL;
 
     void *data;
     static const D3DVERTEXELEMENT9 decl_elements[] = {
-        {0, 0, D3DDECLTYPE_FLOAT3,      D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,   0},
+        {0,  0, D3DDECLTYPE_FLOAT3,      D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION,  0},
+        {0, 12, D3DDECLTYPE_UBYTE4,      D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL,    0},
+        {0, 16, D3DDECLTYPE_SHORT2,      D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,  0},
+        {0, 20, D3DDECLTYPE_UBYTE4,      D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT,   0},
+        {0, 24, D3DDECLTYPE_UBYTE4,      D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BINORMAL,  0},
+        {0, 28, D3DDECLTYPE_D3DCOLOR,    D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR,     0},
+        {0, 32, D3DDECLTYPE_SHORT2,      D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,  1},
         D3DDECL_END()
     };
 
@@ -131,7 +185,7 @@ static IDirect3DDevice9 *create_device()
     presparm.BackBufferCount = 1;
     presparm.BackBufferFormat = D3DFMT_X8R8G8B8;
     presparm.BackBufferWidth = 1920; /* FIXME */
-    presparm.BackBufferHeight = 1080;
+    presparm.BackBufferHeight = 1200;
     presparm.AutoDepthStencilFormat = D3DFMT_D24X8;
     presparm.EnableAutoDepthStencil = FALSE;
     presparm.SwapEffect = D3DSWAPEFFECT_DISCARD;
@@ -160,7 +214,7 @@ static IDirect3DDevice9 *create_device()
 	hr = dev->CreateVertexShader((DWORD *)vs_code->GetBufferPointer(), &vs);
     if (FAILED(hr)) goto err;
 
-	hr = D3DXAssembleShader(ps_txt_const, strlen(ps_txt_const), NULL, NULL, 0, &ps_code, &msgs);
+	hr = D3DXAssembleShader(ps_txt, strlen(ps_txt), NULL, NULL, 0, &ps_code, &msgs);
 	if (FAILED(hr))
 	{
 		printf("ps msgs: %s\n", msgs->GetBufferPointer());
@@ -177,47 +231,66 @@ static IDirect3DDevice9 *create_device()
     dev->SetPixelShader(ps);
     dev->SetVertexDeclaration(decl);
 
-    vs->Release();
-    ps->Release();
-    decl->Release();
-    cubebuffer->Release();
-
 	for (i = 0; i < 256; i++)
 	{
 		dev->SetPixelShaderConstantF(i, half, 1);
 	}
+    dev->SetVertexShaderConstantF(0, identity, 4);
+    dev->SetVertexShaderConstantF(4, identity, 4);
 
-	for (i = 0; i < sizeof(tex) / sizeof(*tex); i++)
-	{
-		D3DLOCKED_RECT lr;
-		unsigned int y;
-		D3DSURFACE_DESC desc;
+    hr = D3DXCreateTextureFromFileEx(dev, "tex0.dds", D3DX_DEFAULT, D3DX_DEFAULT, D3DX_FROM_FILE, 0, D3DFMT_FROM_FILE,
+            D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_FILTER_NONE, 0, NULL, NULL, &tex[0]);
+    if (FAILED(hr))
+        goto err;
+    hr = D3DXCreateTextureFromFileEx(dev, "tex1.dds", D3DX_DEFAULT, D3DX_DEFAULT, D3DX_FROM_FILE, 0, D3DFMT_FROM_FILE,
+            D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_FILTER_NONE, 0, NULL, NULL, &tex[1]);
+    if (FAILED(hr))
+        goto err;
+    hr = D3DXCreateTextureFromFileEx(dev, "tex2.dds", D3DX_DEFAULT, D3DX_DEFAULT, D3DX_FROM_FILE, 0, D3DFMT_FROM_FILE,
+            D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_FILTER_NONE, 0, NULL, NULL, &tex[2]);
+    if (FAILED(hr))
+        goto err;
+    hr = D3DXCreateTextureFromFileEx(dev, "tex3.dds", D3DX_DEFAULT, D3DX_DEFAULT, D3DX_FROM_FILE, 0, D3DFMT_FROM_FILE,
+            D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_FILTER_NONE, 0, NULL, NULL, &tex[3]);
+    if (FAILED(hr))
+        goto err;
+    hr = D3DXCreateTextureFromFileEx(dev, "tex4.dds", D3DX_DEFAULT, D3DX_DEFAULT, D3DX_FROM_FILE, D3DUSAGE_DYNAMIC,
+            D3DFMT_FROM_FILE, D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_FILTER_NONE, 0, NULL, NULL, &tex[4]);
+    if (FAILED(hr))
+        goto err;
 
-		hr = dev->CreateTexture(1024, 768, 1, 0, D3DFMT_X8R8G8B8, D3DPOOL_MANAGED, &tex[i], NULL);
-		if (FAILED(hr))
-			goto err;
+    for (i = 0; i < (sizeof(tex) / sizeof(*tex)); i++)
+    {
+        hr = dev->SetTexture(i, tex[i]);
+        if (FAILED(hr))
+            goto err;
+    }
+    
+    hr = dev->CreateRenderTarget(presparm.BackBufferWidth, presparm.BackBufferHeight, D3DFMT_A8R8G8B8, presparm.MultiSampleType, presparm.MultiSampleQuality, FALSE, &rt1, NULL);
+    if (FAILED(hr)) goto err;
+    hr = dev->CreateRenderTarget(presparm.BackBufferWidth, presparm.BackBufferHeight, D3DFMT_A8R8G8B8, presparm.MultiSampleType, presparm.MultiSampleQuality, FALSE, &rt2, NULL);
+    if (FAILED(hr)) goto err;
 
-		hr = tex[i]->GetLevelDesc(0, &desc);
-		if (FAILED(hr))
-			goto err;
-		hr = tex[i]->LockRect(0, &lr, NULL, 0);
-		if (FAILED(hr))
-			goto err;
+    hr = dev->SetRenderTarget(1, rt1);
+    if (FAILED(hr)) goto err;
+    hr = dev->SetRenderTarget(2, rt2);
+    if (FAILED(hr)) goto err;
 
-		for (y = 0; y < desc.Height; y++)
-		{
-			memset(((BYTE *)lr.pBits) + lr.Pitch * y, 0xff, lr.Pitch);
-		}
+    rt1->Release();
+    rt2->Release();
+    vs->Release();
+    ps->Release();
+    decl->Release();
+    cubebuffer->Release();
+    for (i = 0; i < (sizeof(tex) / sizeof(*tex)); i++)
+        tex[i]->Release();
 
-		tex[i]->UnlockRect(0);
-
-		dev->SetTexture(i, tex[i]);
-	}
-
-	return dev;
+    return dev;
 
 err:
     printf("Init error\n");
+    if (rt1) rt1->Release();
+    if (rt2) rt2->Release();
 	for (i = 0; i < sizeof(tex) / sizeof(*tex); i++)
 		if (tex[i]) tex[i]->Release();
 	if (vs_code) vs_code->Release();
