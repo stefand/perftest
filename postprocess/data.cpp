@@ -1,3 +1,7 @@
+/* Stupid mingw g++ */
+#include <algorithm>
+using namespace std;
+
 #include <cstdio>
 #include <d3dx9.h>
 
