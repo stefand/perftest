@@ -384,7 +384,9 @@ HRESULT init_data(IDirect3DDevice9 *dev)
 
     for (i = 0; i < 3; i++)
     {
-        hr = D3DXCreateTextureFromFileEx(dev, data[0].textures[i].filename, D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2,
+        char buffer[32];
+        sprintf(buffer, "data/%s", data[0].textures[i].filename);
+        hr = D3DXCreateTextureFromFileEx(dev, buffer, D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2,
                 D3DX_FROM_FILE, 0, D3DFMT_FROM_FILE, D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_FILTER_NONE, 0, NULL, NULL,
                 (IDirect3DTexture9 **)&data[0].textures[i].texture);
         if (FAILED(hr))
