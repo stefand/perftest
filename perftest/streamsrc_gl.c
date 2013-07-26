@@ -198,12 +198,12 @@ static int init(void)
     prog = glCreateProgram();
     glAttachShader(prog, vert);
     glAttachShader(prog, frag);
-    glLinkProgram(prog);
-    glDeleteShader(vert);
-    glDeleteShader(frag);
     glBindAttribLocation(prog, 0, "attrib0");
     glBindAttribLocation(prog, 1, "attrib1");
     glBindAttribLocation(prog, 2, "attrib2");
+    glLinkProgram(prog);
+    glDeleteShader(vert);
+    glDeleteShader(frag);
     glGetProgramInfoLog(prog, sizeof(log), &len, log);
     if (len > 0)
     {
