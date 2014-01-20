@@ -305,7 +305,11 @@ void draw_loop()
     unsigned long frames = ~0UL;
 
     device->GetSwapChain(0, &swapchain);
- 
+
+    /* Some HW needs some time to initialize d3d, especially if fullscreen
+     * mode is used. Wait a bit before starting the benchmark. */
+    Sleep(5000);
+
     device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE );
     device->SetRenderState(D3DRS_ZENABLE, TRUE);
     start = GetTickCount();
