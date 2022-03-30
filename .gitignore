@@ -5,3 +5,4 @@ Debug
 clear_gl/Release
 x64/
 .vs/
+*.vcxproj.user
