@@ -1,4 +1,7 @@
 perftest.sdf
 ipch/
 Release
+Debug
 clear_gl/Release
+x64/
+.vs/
