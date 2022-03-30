@@ -4,7 +4,13 @@
 #include <d3dx9.h>
 #include <ctime>
 
-unsigned long time_limit = 0;
+static HMODULE d3d9dll, d3dx9dll;
+static unsigned long time_limit = 0;
+IDirect3D9 *(WINAPI *pDirect3DCreate9)(UINT SDKVersion);
+D3DXMATRIX *(WINAPI *pD3DXMatrixRotationAxis)(D3DXMATRIX *, const D3DXVECTOR3 *, FLOAT);
+D3DXMATRIX *(WINAPI *pD3DXMatrixScaling)(D3DXMATRIX *, FLOAT, FLOAT, FLOAT);
+D3DXMATRIX *(WINAPI *pD3DXMatrixTranslation)(D3DXMATRIX *, FLOAT, FLOAT, FLOAT);
+D3DXMATRIX *(WINAPI *pD3DXMatrixMultiply)(D3DXMATRIX *, const D3DXMATRIX *, const D3DXMATRIX *);
 
 static const struct cube
 {
@@ -189,8 +195,39 @@ static IDirect3DDevice9 *create_device()
         D3DDECL_END()
     };
 
+    /* It seems Microsoft's 64 bit d3d9.lib and d3dx9.lib are missing some exports. */
+    d3d9dll = LoadLibraryA("d3d9");
+    if (!d3d9dll)
+    {
+        printf("d3d9.dll not loaded\n");
+        return NULL;
+    }
+    d3dx9dll = LoadLibraryA("d3dx9_43");
+    if (!d3dx9dll)
+    {
+        printf("d3dx9_43.dll not loaded\n");
+        return NULL;
+    }
+
+    /* Urk, can't I have (void *) to any pointer assignments in C++ ? */
+    pDirect3DCreate9 =
+        (IDirect3D9 * (WINAPI *)(UINT))
+        GetProcAddress(d3d9dll, "Direct3DCreate9");
+    pD3DXMatrixRotationAxis =
+        (D3DXMATRIX * (WINAPI *)(D3DXMATRIX *, const D3DXVECTOR3 *, FLOAT))
+        GetProcAddress(d3dx9dll, "D3DXMatrixRotationAxis");
+    pD3DXMatrixScaling =
+        (D3DXMATRIX * (WINAPI *)(D3DXMATRIX *, FLOAT, FLOAT, FLOAT))
+        GetProcAddress(d3dx9dll, "D3DXMatrixScaling");
+    pD3DXMatrixTranslation =
+        (D3DXMATRIX * (WINAPI *)(D3DXMATRIX *, FLOAT, FLOAT, FLOAT))
+        GetProcAddress(d3dx9dll, "D3DXMatrixTranslation");
+    pD3DXMatrixMultiply =
+        (D3DXMATRIX * (WINAPI *)(D3DXMATRIX *, const D3DXMATRIX *, const D3DXMATRIX *))
+        GetProcAddress(d3dx9dll, "D3DXMatrixMultiply");
+
     window = create_window();
-    d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
+    d3d9 = pDirect3DCreate9(D3D_SDK_VERSION);
     if(!d3d9) return NULL;
 
     memset(&presparm, 0, sizeof(presparm));
@@ -232,11 +269,11 @@ static IDirect3DDevice9 *create_device()
     axis.y = 1.0;
     axis.z = 0.0;
     D3DXMatrixIdentity(&mat);
-    D3DXMatrixRotationAxis(&mat, &axis, 45);
-    D3DXMatrixScaling(&scale, 1.0, 1.0, 0.5);
-    D3DXMatrixTranslation(&translate, 0.0, 0.0, 0.5);
-    D3DXMatrixMultiply(&mat, &mat, &scale);
-    D3DXMatrixMultiply(&mat, &mat, &translate);
+    pD3DXMatrixRotationAxis(&mat, &axis, 45);
+    pD3DXMatrixScaling(&scale, 1.0, 1.0, 0.5);
+    pD3DXMatrixTranslation(&translate, 0.0, 0.0, 0.5);
+    pD3DXMatrixMultiply(&mat, &mat, &scale);
+    pD3DXMatrixMultiply(&mat, &mat, &translate);
     float m2[4][4] = {
         {   mat.m[0][0],    mat.m[1][0],    mat.m[2][0],    mat.m[3][0]     },
         {   mat.m[0][1],    mat.m[1][1],    mat.m[2][1],    mat.m[3][1]     },
